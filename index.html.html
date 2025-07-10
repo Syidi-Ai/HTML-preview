@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Aplikasi Live Preview Kod HTML, CSS & JS - Versi Guru</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary: #00796b;
+      --primary-dark: #004d40;
+      --secondary: #0288d1;
+      --light-bg: #f0f4f8;
+      --dark-bg: #e0eaf1;
+      --editor-bg: #2d2d2d;
+      --text-light: #f8f9fa;
+      --text-dark: #333;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --error: #f44336;
+      --border: #ced4da;
+      --gutter-bg: #252526;
+      --line-highlight: #3a3a3a;
+      --exceed-limit: #ff5252;
+    }
+
+* {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 1.2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 10;
+    }
+
+.header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+header p {
+      margin: 0.3rem 0 0;
+      font-size: 1rem;
+      max-width: 800px;
+    }
+
+.logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+.logo {
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--primary);
+      font-size: 1.4rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+.container {
+      display: flex;
+      flex-direction: column;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      gap: 1.5rem;
+    }
+
+.main-content {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+.editor-container {
+      flex: 1 1 600px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      position: relative;
+    }
+
+.editor-header {
+      background: var(--primary);
+      color: white;
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+.editor-title {
+      font-weight: 500;
+      font-size: 1.2rem;
+    }
+
+.editor-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+.code-wrapper {
+      position: relative;
+      height: 500px;
+      overflow: auto;
+      background: var(--editor-bg);
+    }
+
+.editor {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 1rem 1rem 1rem 4rem;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-light);
+      background: transparent;
+      border: none;
+      resize: none;
+      white-space: pre;
+      tab-size: 2;
+      overflow: auto;
+      outline: none;
+      z-index: 2;
+      caret-color: white;
+    }
+
+.gutter {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3.5rem;
+      height: 100%;
+      background-color: var(--gutter-bg);
+      color: #858585;
+      text-align: right;
+      padding: 1rem 0.5rem;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      z-index: 1;
+      user-select: none;
+    }
+
+.editor-line {
+      position: absolute;
+      left: 3.5rem;
+      width: calc(100% - 3.5rem);
+      height: 1.5em;
+      background-color: var(--line-highlight);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+.button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 1rem;
+      background: var(--dark-bg);
+      border-radius: 0 0 12px 12px;
+    }
+
+button {
+      flex: 1 1 160px;
+      padding: 12px 16px;
+      font-size: 16px;
+      font-weight: 500;
+      border: none;
+      border-radius: 8px;
+      background: var(--primary);
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+button:active {
+      transform: translateY(0);
+    }
+
+.run-btn {
+      background: var(--success);
+    }
+
+.run-btn:hover {
+      background: #3d8b40;
+    }
+
+.preview-container {
+      flex: 1 1 500px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+    }
+
+.preview-header {
+      background: var(--secondary);
+      color: white;
+      padding: 0.8rem 1.2rem;
+      font-weight: 500;
+      font-size: 1.2rem;
+    }
+
+iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+      background: white;
+    }
+
+.stats-bar {
+      display: flex;
+      justify-content: space-between;
+      background: var(--dark-bg);
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+.stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+.stat-badge {
+      background: var(--primary);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+    }
+
+.exceeded {
+      background: var(--exceed-limit);
+      animation: pulse 1.5s infinite;
+    }
+
+@keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+.features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+.feature-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+.feature-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+.feature-card h3 {
+      color: var(--primary);
+      font-size: 1.3rem;
+    }
+
+footer {
+      background: var(--primary-dark);
+      color: white;
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+    }
+
+.performance-warning {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--warning);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: none;
+      z-index: 20;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+@media screen and (max-width: 1200px) {
+      .main-content {
+        flex-direction: column;
+      }
+
+.editor-container, .preview-container {
+        flex: 1 1 auto;
+        width: 100%;
+      }
+    }
+
+@media screen and (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+
+.logo-container {
+        justify-content: center;
+      }
+
+.editor-header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+.button-group {
+        flex-direction: column;
+      }
+
+button {
+        width: 100%;
+      }
+
+.stats-bar {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+    }
+
+/* Syntax Highlighting */
+    .tag { color: #e06c75; }
+    .attr { color: #d19a66; }
+    .val { color: #98c379; }
+    .comment { color: #5c6370; font-style: italic; }
+    .keyword { color: #c678dd; }
+    .func { color: #61afef; }
+    .string { color: #98c379; }
+    .number { color: #d19a66; }
+    .operator { color: #56b6c2; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo-container">
+        <div class="logo">GI</div>
+        <div>
+          <h1>Aplikasi Live Preview Kod HTML, CSS & JS - Versi Guru</h1>
+          <p>Alat untuk guru membina inovasi pengajaran dengan sokongan sehingga 5,000 baris kod</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+<div class="container">
+    <div class="main-content">
+      <div class="editor-container">
+        <div class="performance-warning" id="performance-warning">⚠️ Prestasi mungkin menurun kerana kod yang panjang</div>
+        <div class="editor-header">
+          <div class="editor-title">Editor Kod (Sokongan sehingga 5000 baris)</div>
+          <div class="editor-actions">
+            <div class="stat-badge" id="line-count">Baris: 0</div>
+            <div class="stat-badge" id="char-count">Aksara: 0</div>
+          </div>
+        </div>
+        <div class="code-wrapper">
+          <div class="gutter" id="gutter"></div>
+          <div class="editor-line" id="editor-line"></div>
+          <textarea id="code" class="editor" spellcheck="false" placeholder="Masukkan kod HTML, CSS, dan JS anda di sini..."></textarea>
+        </div>
+        <div class="button-group">
+          <button class="run-btn" onclick="jalankanKod()">
+            <i>▶️</i> Jalankan Kod
+          </button>
+          <button onclick="simpanKod()">
+            <i>💾</i> Simpan Kod
+          </button>
+          <button onclick="salinKod()">
+            <i>📋</i> Salin Kod
+          </button>
+          <button onclick="muatTurunKod()">
+            <i>⬇️</i> Muat Turun .html
+          </button>
+          <button onclick="kosongkanEditor()" style="background: #f44336;">
+            <i>🗑️</i> Kosongkan Editor
+          </button>
+        </div>
+      </div>
+
+<div class="preview-container">
+        <div class="preview-header">Pratonton Langsung</div>
+        <iframe id="preview"></iframe>
+      </div>
+    </div>
+
+<div class="stats-bar">
+      <div class="stat-item">
+        <span>Status:</span>
+        <span id="status" class="stat-badge">Sedia</span>
+      </div>
+      <div class="stat-item">
+        <span>Versi:</span>
+        <span class="stat-badge">Guru Inovatif 2.0</span>
+      </div>
+      <div class="stat-item">
+        <span>Sokongan:</span>
+        <span class="stat-badge">5000 Baris Kod</span>
+      </div>
+      <div class="stat-item">
+        <span>Memori:</span>
+        <span id="memory-usage" class="stat-badge">0 KB</span>
+      </div>
+    </div>
+
+<div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">1</div>
+        <h3>Sokongan Kod Besar</h3>
+        <p>Aplikasi kini menyokong sehingga 5000 baris kod dengan pengoptimuman prestasi untuk memastikan kelancaran operasi.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">2</div>
+        <h3>Pemantauan Prestasi</h3>
+        <p>Pantau penggunaan memori dan terima amaran jika kod terlalu kompleks untuk prestasi terbaik.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">3</div>
+        <h3>Navigasi Efisien</h3>
+        <p>Navigasi baris yang dioptimumkan dengan penomboran jelas setiap 10 baris untuk projek besar.</p>
+      </div>
+    </div>
+  </div>
+
+<footer>
+    <p>© 2023 Aplikasi Live Preview Kod - Versi Guru Inovatif | Sokongan sehingga 5000 baris kod | Direka untuk Penggunaan Pendidikan</p>
+  </footer>
+
+<script>
+    // Elemen DOM
+    const codeElement = document.getElementById('code');
+    const previewFrame = document.getElementById('preview');
+    const gutterElement = document.getElementById('gutter');
+    const editorLine = document.getElementById('editor-line');
+    const lineCountElement = document.getElementById('line-count');
+    const charCountElement = document.getElementById('char-count');
+    const statusElement = document.getElementById('status');
+    const memoryUsageElement = document.getElementById('memory-usage');
+    const performanceWarning = document.getElementById('performance-warning');
+
+// Contoh kod awal (lebih ringkas untuk prestasi)
+    const initialCode = `<!DOCTYPE html>
+<html>
+<head>
+  <title>Contoh Projek Guru</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #9face6);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+.container {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+
+h1 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+.btn {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+
+.btn:hover {
+      background: #2980b9;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Selamat Datang ke Aplikasi Guru Inovatif</h1>
+    <p>Aplikasi kini menyokong sehingga 5000 baris kod untuk projek yang lebih kompleks!</p>
+    <p>Versi: <strong>Guru Inovatif 2.0</strong></p>
+    <button class="btn" onclick="showMessage()">Klik untuk Demo</button>
+    <p id="message" style="margin-top: 20px; font-weight: bold;"></p>
+  </div>
+
+<script>
+    function showMessage() {
+      const messages = [
+        "Anda berjaya!",
+        "Sokongan 5000 baris kod!",
+        "Inovasi tanpa batas!",
+        "Mari cipta pengalaman pembelajaran yang menarik!"
+      ];
+
+const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+      document.getElementById('message').textContent = randomMsg;
+    }
+  <\/script>
+</body>
+</html>`;
+
+// Fungsi untuk menjalankan kod
+    function jalankanKod() {
+      try {
+        const kod = codeElement.value;
+
+if (kod.trim() === '') {
+          updateStatus('Sila masukkan kod terlebih dahulu', 'warning');
+          return;
+        }
+
+const startTime = performance.now();
+        const dokumen = previewFrame.contentDocument || previewFrame.contentWindow.document;
+        dokumen.open();
+        dokumen.write(kod);
+        dokumen.close();
+        const endTime = performance.now();
+
+updateStatus(`Kod berjaya dijalankan (${(endTime - startTime).toFixed(2)}ms)`, 'success');
+      } catch (error) {
+        console.error('Ralat:', error);
+        updateStatus(`Ralat: ${error.message}`, 'error');
+      }
+    }
+
+// Fungsi untuk menyimpan kod
+    function simpanKod() {
+      const kod = codeElement.value;
+      localStorage.setItem("livePreviewKod", kod);
+      updateStatus('Kod berjaya disimpan ke penyimpanan pelayar', 'success');
+    }
+
+// Fungsi untuk menyalin kod
+    function salinKod() {
+      codeElement.select();
+      document.execCommand("copy");
+      updateStatus('Kod berjaya disalin ke klipbod', 'success');
+    }
+
+// Fungsi untuk memuat turun kod
+    function muatTurunKod() {
+      const kod = codeElement.value;
+      const blob = new Blob([kod], { type: "text/html" });
+      const pautan = document.createElement("a");
+      pautan.href = URL.createObjectURL(blob);
+      pautan.download = "projek-guru.html";
+      document.body.appendChild(pautan);
+      pautan.click();
+      document.body.removeChild(pautan);
+      updateStatus('Fail berjaya dimuat turun', 'success');
+    }
+
+// Fungsi untuk mengosongkan editor
+    function kosongkanEditor() {
+      if (confirm('Adakah anda pasti mahu mengosongkan editor?')) {
+        codeElement.value = '';
+        updateGutter();
+        updateStatus('Editor telah dikosongkan', 'warning');
+      }
+    }
+
+// Fungsi mengemas kini status
+    function updateStatus(message, type) {
+      statusElement.textContent = message;
+      statusElement.className = 'stat-badge';
+
+switch (type) {
+        case 'success':
+          statusElement.style.backgroundColor = '#4caf50';
+          break;
+        case 'warning':
+          statusElement.style.backgroundColor = '#ff9800';
+          break;
+        case 'error':
+          statusElement.style.backgroundColor = '#f44336';
+          break;
+        default:
+          statusElement.style.backgroundColor = '#00796b';
+      }
+
+// Reset status selepas 3 saat
+      setTimeout(() => {
+        if (statusElement.textContent === message) {
+          statusElement.textContent = 'Sedia';
+          statusElement.style.backgroundColor = '#00796b';
+        }
+      }, 3000);
+    }
+
+// Fungsi mengukur penggunaan memori
+    function updateMemoryUsage() {
+      const kod = codeElement.value;
+      // Anggaran penggunaan memori (1 aksara ≈ 2 bytes)
+      const memoryKB = (kod.length * 2 / 1024).toFixed(2);
+      memoryUsageElement.textContent = `${memoryKB} KB`;
+
+// Tunjukkan amaran jika melebihi 500KB
+      if (memoryKB > 500) {
+        memoryUsageElement.classList.add('exceeded');
+      } else {
+        memoryUsageElement.classList.remove('exceeded');
+      }
+    }
+
+// Fungsi mengemas kini gutter (nombor baris)
+    function updateGutter() {
+      const kod = codeElement.value;
+      const baris = kod.split('\n');
+      const lineCount = baris.length;
+
+// Kemas kini UI baris
+      lineCountElement.textContent = `Baris: ${lineCount}`;
+      charCountElement.textContent = `Aksara: ${kod.length}`;
+
+// Had 5000 baris
+      if (lineCount > 5000) {
+        lineCountElement.classList.add('exceeded');
+        updateStatus('Amaran: Kod melebihi 5000 baris!', 'warning');
+        performanceWarning.style.display = 'block';
+      } else {
+        lineCountElement.classList.remove('exceeded');
+        performanceWarning.style.display = 'none';
+      }
+
+// Buat gutter dengan pengoptimuman
+      gutterElement.innerHTML = '';
+      for (let i = 1; i <= lineCount; i++) {
+        const lineNumber = document.createElement('div');
+        lineNumber.textContent = i;
+
+// Garisan setiap 10 baris untuk prestasi lebih baik
+        if (i % 10 === 0) {
+          lineNumber.style.fontWeight = 'bold';
+          lineNumber.style.color = '#ccc';
+        }
+
+gutterElement.appendChild(lineNumber);
+      }
+
+// Kemas kini penggunaan memori
+      updateMemoryUsage();
+    }
+
+// Fungsi untuk menjejaki baris semasa
+    function trackCurrentLine() {
+      const cursorPosition = codeElement.selectionStart;
+      const kod = codeElement.value;
+      const baris = kod.substring(0, cursorPosition).split('\n');
+      const currentLine = baris.length;
+
+// Kemas kini penanda baris
+      const lineHeight = 24;
+      editorLine.style.top = `${(currentLine - 1) * lineHeight}px`;
+    }
+
+// Event listeners dengan debounce untuk prestasi
+    let updateTimeout;
+    function handleInput() {
+      clearTimeout(updateTimeout);
+      updateTimeout = setTimeout(updateGutter, 300);
+    }
+
+codeElement.addEventListener('input', handleInput);
+    codeElement.addEventListener('keyup', trackCurrentLine);
+    codeElement.addEventListener('scroll', function() {
+      gutterElement.scrollTop = codeElement.scrollTop;
+    });
+
+// Muat kod awal
+    window.onload = function() {
+      const simpan = localStorage.getItem("livePreviewKod");
+      codeElement.value = simpan || initialCode;
+      updateGutter();
+      jalankanKod();
+    };
+  </script>
+</body>
+</html>
